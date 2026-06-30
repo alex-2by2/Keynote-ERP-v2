@@ -39,6 +39,7 @@ import accountLedgerRoutes from "./accountLedger.routes.js";
 import voucherRoutes from "./voucher.routes.js";
 import journalEntryRoutes from "./journalEntry.routes.js";
 import purchaseInvoiceRoutes from "./purchaseInvoice.routes.js";
+import salesInvoiceRoutes from "./salesInvoice.routes.js";
 
 const router = Router();
 
@@ -81,6 +82,10 @@ router.use("/journal-entries", journalEntryRoutes);
 router.use(
   "/purchase-invoices",
   purchaseInvoiceRoutes
+);
+router.use(
+  "/sales-invoices",
+  salesInvoiceRoutes
 );
 
 export default router;
