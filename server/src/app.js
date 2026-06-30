@@ -44,3 +44,15 @@ export default app;
 import requestLogger from "./middleware/requestLogger.js";
 
 app.use(requestLogger);
+import {
+  helmetMiddleware,
+  corsMiddleware,
+  compressionMiddleware,
+  apiLimiter
+} from "./config/security.js";
+
+app.use(helmetMiddleware);
+app.use(corsMiddleware);
+app.use(compressionMiddleware);
+app.use(apiLimiter);
+
