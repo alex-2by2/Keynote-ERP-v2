@@ -23,6 +23,13 @@ import itemCategoryRoutes from "./itemCategory.routes.js";
 import itemRoutes from "./item.routes.js";
 import stockRoutes from "./stock.routes.js";
 
+import supplierRoutes from "./supplier.routes.js";
+import customerRoutes from "./customer.routes.js";
+import purchaseOrderRoutes from "./purchaseOrder.routes.js";
+import salesOrderRoutes from "./salesOrder.routes.js";
+import goodsReceiptRoutes from "./goodsReceipt.routes.js";
+import goodsIssueRoutes from "./goodsIssue.routes.js";
+
 const router = Router();
 
 router.use("/health", healthRoutes);
@@ -45,5 +52,12 @@ router.use("/units", unitOfMeasureRoutes);
 router.use("/item-categories", itemCategoryRoutes);
 router.use("/items", itemRoutes);
 router.use("/stocks", stockRoutes);
+
+router.use("/suppliers", supplierRoutes);
+router.use("/customers", customerRoutes);
+router.use("/purchase-orders", purchaseOrderRoutes);
+router.use("/sales-orders", salesOrderRoutes);
+router.use("/goods-receipts", goodsReceiptRoutes);
+router.use("/goods-issues", goodsIssueRoutes);
 
 export default router;
