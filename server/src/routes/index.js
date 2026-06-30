@@ -29,6 +29,13 @@ import purchaseOrderRoutes from "./purchaseOrder.routes.js";
 import salesOrderRoutes from "./salesOrder.routes.js";
 import goodsReceiptRoutes from "./goodsReceipt.routes.js";
 import goodsIssueRoutes from "./goodsIssue.routes.js";
+import inventoryTransactionRoutes from "./inventoryTransaction.routes.js";
+import stockTransferRoutes from "./stockTransfer.routes.js";
+import purchaseReturnRoutes from "./purchaseReturn.routes.js";
+import salesReturnRoutes from "./salesReturn.routes.js";
+
+import accountGroupRoutes from "./accountGroup.routes.js";
+import accountLedgerRoutes from "./accountLedger.routes.js";
 
 const router = Router();
 
@@ -59,5 +66,12 @@ router.use("/purchase-orders", purchaseOrderRoutes);
 router.use("/sales-orders", salesOrderRoutes);
 router.use("/goods-receipts", goodsReceiptRoutes);
 router.use("/goods-issues", goodsIssueRoutes);
+router.use("/inventory-transactions", inventoryTransactionRoutes);
+router.use("/stock-transfers", stockTransferRoutes);
+router.use("/purchase-returns", purchaseReturnRoutes);
+router.use("/sales-returns", salesReturnRoutes);
+
+router.use("/account-groups", accountGroupRoutes);
+router.use("/account-ledgers", accountLedgerRoutes);
 
 export default router;
