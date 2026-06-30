@@ -2,8 +2,14 @@
 
 import AppError from "../utils/AppError.js";
 import UserService from "./UserService.js";
-import { verifyPassword } from "../utils/password.js";
-import { generateAccessToken } from "../utils/jwt.js";
+
+import {
+  verifyPassword
+} from "../utils/password.js";
+
+import {
+  generateAccessToken
+} from "../utils/jwt.js";
 
 export default class AuthService {
   static async login(email, password) {
@@ -17,7 +23,18 @@ export default class AuthService {
       );
     }
 
-    const passwordMatched = verifyPassword(password, user.password);
+    if (!user.isActive) {
+      throw new AppError(
+        "User account is disabled.",
+        403,
+        "ACCOUNT_DISABLED"
+      );
+    }
+
+    const passwordMatched = verifyPassword(
+      password,
+      user.password
+    );
 
     if (!passwordMatched) {
       throw new AppError(
@@ -32,7 +49,8 @@ export default class AuthService {
     return {
       accessToken: generateAccessToken({
         sub: user.id,
-        role: user.role
+        role: user.role,
+        email: user.email
       }),
       user: {
         id: user.id,
