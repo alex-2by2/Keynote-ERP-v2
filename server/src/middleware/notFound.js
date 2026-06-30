@@ -1,6 +1,7 @@
 export default function notFound(req, res) {
-  return res.status(404).json({
+  res.status(404).json({
     success: false,
+    requestId: req.requestId,
     message: "Route not found"
   });
 }
