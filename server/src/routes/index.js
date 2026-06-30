@@ -4,25 +4,44 @@ import { Router } from "express";
 
 import healthRoutes from "./health.routes.js";
 import authRoutes from "./auth.routes.js";
+
 import userRoutes from "./user.routes.js";
 import roleRoutes from "./role.routes.js";
 import permissionRoutes from "./permission.routes.js";
+
+import companyRoutes from "./company.routes.js";
+import branchRoutes from "./branch.routes.js";
 import departmentRoutes from "./department.routes.js";
 import designationRoutes from "./designation.routes.js";
 import employeeRoutes from "./employee.routes.js";
 
+import financialYearRoutes from "./financialYear.routes.js";
+import costCenterRoutes from "./costCenter.routes.js";
+import warehouseRoutes from "./warehouse.routes.js";
+import unitOfMeasureRoutes from "./unitOfMeasure.routes.js";
+import itemCategoryRoutes from "./itemCategory.routes.js";
+import itemRoutes from "./item.routes.js";
+
 const router = Router();
 
 router.use("/health", healthRoutes);
-
 router.use("/auth", authRoutes);
 
 router.use("/users", userRoutes);
 router.use("/roles", roleRoutes);
 router.use("/permissions", permissionRoutes);
 
+router.use("/companies", companyRoutes);
+router.use("/branches", branchRoutes);
 router.use("/departments", departmentRoutes);
 router.use("/designations", designationRoutes);
 router.use("/employees", employeeRoutes);
+
+router.use("/financial-years", financialYearRoutes);
+router.use("/cost-centers", costCenterRoutes);
+router.use("/warehouses", warehouseRoutes);
+router.use("/units", unitOfMeasureRoutes);
+router.use("/item-categories", itemCategoryRoutes);
+router.use("/items", itemRoutes);
 
 export default router;
