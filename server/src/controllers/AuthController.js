@@ -6,28 +6,12 @@ import AppError from "../utils/AppError.js";
 
 import UserService from "../services/UserService.js";
 
-import {
-  generateAccessToken
-} from "../utils/jwt.js";
-
-import {
-  verifyPassword
-} from "../utils/password.js";
+import { generateAccessToken } from "../utils/jwt.js";
+import { verifyPassword } from "../utils/password.js";
+import { validateLogin } from "../validators/auth.validator.js";
 
 export const login = asyncHandler(async (req, res) => {
-  const email = String(req.body.email || "")
-    .trim()
-    .toLowerCase();
-
-  const password = String(req.body.password || "");
-
-  if (!email || !password) {
-    throw new AppError(
-      "Email and password are required.",
-      400,
-      "VALIDATION_ERROR"
-    );
-  }
+  const { email, password } = validateLogin(req.body);
 
   const user = await UserService.getByEmail(email);
 
@@ -39,12 +23,9 @@ export const login = asyncHandler(async (req, res) => {
     );
   }
 
-  const validPassword = verifyPassword(
-    password,
-    user.password
-  );
+  const passwordMatched = verifyPassword(password, user.password);
 
-  if (!validPassword) {
+  if (!passwordMatched) {
     throw new AppError(
       "Invalid email or password.",
       401,
@@ -54,7 +35,7 @@ export const login = asyncHandler(async (req, res) => {
 
   await UserService.updateLastLogin(user.id);
 
-  const token = generateAccessToken({
+  const accessToken = generateAccessToken({
     sub: user.id,
     role: user.role
   });
@@ -62,7 +43,7 @@ export const login = asyncHandler(async (req, res) => {
   return success(
     res,
     {
-      accessToken: token,
+      accessToken,
       user: {
         id: user.id,
         firstName: user.firstName,
