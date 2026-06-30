@@ -1,13 +1,8 @@
 import { Router } from "express";
+import healthRoutes from "./health.routes.js";
 
 const router = Router();
 
-router.get("/", (req, res) => {
-  res.json({
-    success: true,
-    name: "Keynote ERP v2 API",
-    version: "2.0.0"
-  });
-});
+router.use("/health", healthRoutes);
 
 export default router;
