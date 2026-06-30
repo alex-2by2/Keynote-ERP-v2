@@ -8,6 +8,7 @@ import userRoutes from "./user.routes.js";
 import roleRoutes from "./role.routes.js";
 import permissionRoutes from "./permission.routes.js";
 import departmentRoutes from "./department.routes.js";
+import designationRoutes from "./designation.routes.js";
 
 const router = Router();
 
@@ -19,5 +20,6 @@ router.use("/users", userRoutes);
 router.use("/roles", roleRoutes);
 router.use("/permissions", permissionRoutes);
 router.use("/departments", departmentRoutes);
+router.use("/designations", designationRoutes);
 
 export default router;
