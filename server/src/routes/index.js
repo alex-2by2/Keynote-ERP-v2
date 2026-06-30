@@ -38,6 +38,7 @@ import accountGroupRoutes from "./accountGroup.routes.js";
 import accountLedgerRoutes from "./accountLedger.routes.js";
 import voucherRoutes from "./voucher.routes.js";
 import journalEntryRoutes from "./journalEntry.routes.js";
+import purchaseInvoiceRoutes from "./purchaseInvoice.routes.js";
 
 const router = Router();
 
@@ -77,5 +78,9 @@ router.use("/account-groups", accountGroupRoutes);
 router.use("/account-ledgers", accountLedgerRoutes);
 router.use("/vouchers", voucherRoutes);
 router.use("/journal-entries", journalEntryRoutes);
+router.use(
+  "/purchase-invoices",
+  purchaseInvoiceRoutes
+);
 
 export default router;
