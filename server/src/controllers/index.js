@@ -7,3 +7,5 @@ export {
   updateUser,
   deleteUser
 } from "./UserController.js";
+
+export { login } from "./AuthController.js";
