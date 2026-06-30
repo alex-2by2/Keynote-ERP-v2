@@ -39,3 +39,8 @@ app.use(notFound);
 app.use(errorHandler);
 
 export default app;
+// server/src/app.js
+
+import requestLogger from "./middleware/requestLogger.js";
+
+app.use(requestLogger);
