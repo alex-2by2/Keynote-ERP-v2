@@ -21,6 +21,7 @@ import warehouseRoutes from "./warehouse.routes.js";
 import unitOfMeasureRoutes from "./unitOfMeasure.routes.js";
 import itemCategoryRoutes from "./itemCategory.routes.js";
 import itemRoutes from "./item.routes.js";
+import stockRoutes from "./stock.routes.js";
 
 const router = Router();
 
@@ -43,5 +44,6 @@ router.use("/warehouses", warehouseRoutes);
 router.use("/units", unitOfMeasureRoutes);
 router.use("/item-categories", itemCategoryRoutes);
 router.use("/items", itemRoutes);
+router.use("/stocks", stockRoutes);
 
 export default router;
