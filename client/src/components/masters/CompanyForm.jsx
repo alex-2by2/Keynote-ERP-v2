@@ -3,14 +3,15 @@
 import { useState } from "react";
 
 export default function CompanyForm({
+  initialValues = {
+    code: "",
+    name: ""
+  },
   onSubmit,
   loading
 }) {
-  const [form, setForm] = useState({
-    code: "",
-    name: ""
-  });
-
+  const [form, setForm] =
+  useState(initialValues);
   const [error, setError] = useState("");
 
   const handleChange = event => {
