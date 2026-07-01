@@ -27,12 +27,6 @@ const roleSchema = new Schema(
       default: ""
     },
 
-    permissions: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "Permission"
-      }
-    ],
 
     system: {
       type: Boolean,
