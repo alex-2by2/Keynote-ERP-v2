@@ -3,10 +3,22 @@
 import User from "../models/User.js";
 
 export default class UserRepository {
-  static async create(payload) {
-    return User.create(payload);
+ static async create(
+  payload,
+ session = null
+) {
+  if (session) {
+    const [user] =
+      await User.create(
+        [payload],
+        { session }
+      );
+
+    return user;
   }
 
+  return User.create(payload);
+}
   static async findById(id) {
     return User.findById(id);
   }
