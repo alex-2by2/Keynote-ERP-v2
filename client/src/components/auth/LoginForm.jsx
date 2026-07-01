@@ -1,9 +1,19 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+import AuthService from "../../services/auth.service";
+import { useAuth } from "../../store/authStore";
 
 export default function LoginForm({
   loading,
   setLoading
 }) {
+  const navigate = useNavigate();
+
+  const { login } = useAuth();
+
+  const [error, setError] = useState("");
+
   const [form, setForm] = useState({
     email: "",
     password: ""
@@ -14,16 +24,34 @@ export default function LoginForm({
       ...form,
       [e.target.name]: e.target.value
     });
+
+    setError("");
   };
 
   const handleSubmit = async e => {
     e.preventDefault();
 
     setLoading(true);
+    setError("");
 
     try {
-      // Next Commit:
-      // Backend Login API
+      const response =
+        await AuthService.login(form);
+
+      login({
+        accessToken:
+          response.accessToken,
+        user: response.user
+      });
+
+      navigate("/app", {
+        replace: true
+      });
+    } catch (err) {
+      setError(
+        err?.response?.data?.message ||
+        "Invalid email or password."
+      );
     } finally {
       setLoading(false);
     }
@@ -31,6 +59,12 @@ export default function LoginForm({
 
   return (
     <form onSubmit={handleSubmit}>
+      {error && (
+        <p className="error-message">
+          {error}
+        </p>
+      )}
+
       <div>
         <label>Email</label>
 
