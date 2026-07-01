@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import app from "./app.js";
-import { connectDatabase } from "./config/index.js";
+import { connectDatabase } from "./config/database.js";
 
 const PORT = Number(process.env.PORT || 5000);
 
