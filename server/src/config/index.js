@@ -41,7 +41,11 @@ const config = {
       process.env.CORS_ORIGIN
         ?.split(",")
         .map(origin => origin.trim()) ||
-      ["*"]
+      [
+        "http://localhost:5173",
+        "http://localhost:3000",
+        "https://keynote-erp-v2-1.onrender.com"
+      ]
   },
 
   upload: {

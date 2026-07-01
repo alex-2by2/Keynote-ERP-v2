@@ -56,10 +56,12 @@ export default function LoginForm({
         replace: true
       });
     } catch (err) {
-      setError(
+      const errorMessage =
+        err?.response?.data?.message ||
         err?.message ||
-        "Invalid email or password."
-      );
+        "Unable to reach the server. Please try again.";
+
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

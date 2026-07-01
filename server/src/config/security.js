@@ -10,7 +10,16 @@ export const helmetMiddleware = helmet({
 });
 
 export const corsMiddleware = cors({
-  origin: config.cors.origin,
+  origin: (origin, callback) => {
+    const allowedOrigins = config.cors.origin || [];
+
+    if (!origin || allowedOrigins.includes("*") || allowedOrigins.includes(origin)) {
+      callback(null, true);
+      return;
+    }
+
+    callback(null, false);
+  },
   credentials: true,
   methods: [
     "GET",
