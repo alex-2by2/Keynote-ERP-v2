@@ -6,7 +6,10 @@ import CompanyRepository from "../repositories/CompanyRepository.js";
 import BranchRepository from "../repositories/BranchRepository.js";
 
 export default class CompanyService {
-  static async create(payload) {
+  static async create(
+  payload,
+  session = null
+) {
     const code = payload.code.trim().toUpperCase();
 
     const exists = await CompanyRepository.existsByCode(code);
@@ -33,11 +36,13 @@ export default class CompanyService {
       }
     }
 
-    return CompanyRepository.create({
-      ...payload,
-      code
-    });
-  }
+ return CompanyRepository.create(
+  {
+    ...payload,
+    code
+  },
+  session
+);  }
 
   static async getById(id) {
     const company = await CompanyRepository.findById(id);
