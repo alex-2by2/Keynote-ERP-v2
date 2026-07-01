@@ -82,7 +82,37 @@ export default class RoleService {
 
     return RoleRepository.delete(id);
   }
+static async seedDefaults(session = null) {
+  const { DEFAULT_ROLES } = await import(
+    "../seed/roles.seed.js"
+  );
 
+  const createdRoles = [];
+
+  for (const role of DEFAULT_ROLES) {
+    const exists =
+      await RoleRepository.existsByCode(
+        role.code
+      );
+
+    if (exists) {
+      continue;
+    }
+
+    const created =
+      await RoleRepository.create(
+        {
+          ...role,
+          active: true
+        },
+        session
+      );
+
+    createdRoles.push(created);
+  }
+
+  return createdRoles;
+}
   static async #resolvePermissions(permissionIds) {
     const resolved = [];
 
