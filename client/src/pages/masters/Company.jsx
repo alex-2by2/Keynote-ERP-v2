@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 
 import CompanyService from "../../services/company.service";
+import CompanyForm from "../../components/masters/CompanyForm";
 
 export default function Company() {
   const [companies, setCompanies] =
@@ -13,10 +14,28 @@ export default function Company() {
 
   const [error, setError] =
     useState("");
+  const [saving, setSaving] =
+  useState(false);
 
   useEffect(() => {
     loadCompanies();
   }, []);
+  const handleCreate = async data => {
+  try {
+    setSaving(true);
+
+    await CompanyService.create(data);
+
+    await loadCompanies();
+  } catch (err) {
+    setError(
+      err?.response?.data?.message ||
+      "Unable to save company."
+    );
+  } finally {
+    setSaving(false);
+  }
+};
 
   const loadCompanies = async () => {
     try {
@@ -48,7 +67,10 @@ export default function Company() {
   return (
     <div className="page">
       <h1>Companies</h1>
-
+<CompanyForm
+  loading={saving}
+  onSubmit={handleCreate}
+/>
       <table>
         <thead>
           <tr>
