@@ -1,11 +1,21 @@
+// server/src/app.js
+
 import express from "express";
-import cors from "cors";
 import morgan from "morgan";
 
 import apiRoutes from "./routes/index.js";
+
 import requestId from "./middleware/requestId.js";
+import requestLogger from "./middleware/requestLogger.js";
 import notFound from "./middleware/notFound.js";
 import errorHandler from "./middleware/errorHandler.js";
+
+import {
+  helmetMiddleware,
+  corsMiddleware,
+  compressionMiddleware,
+  apiLimiter
+} from "./config/security.js";
 
 const app = express();
 
@@ -13,17 +23,26 @@ app.disable("x-powered-by");
 app.set("trust proxy", true);
 
 app.use(requestId);
+app.use(requestLogger);
+
+app.use(helmetMiddleware);
+app.use(corsMiddleware);
+app.use(compressionMiddleware);
+app.use(apiLimiter);
+
+app.use(morgan("combined"));
 
 app.use(
-  cors({
-    origin: true,
-    credentials: true
+  express.json({
+    limit: "1mb"
   })
 );
 
-app.use(morgan("combined"));
-app.use(express.json({ limit: "1mb" }));
-app.use(express.urlencoded({ extended: true }));
+app.use(
+  express.urlencoded({
+    extended: true
+  })
+);
 
 app.get("/", (req, res) => {
   res.json({
@@ -39,20 +58,3 @@ app.use(notFound);
 app.use(errorHandler);
 
 export default app;
-// server/src/app.js
-
-import requestLogger from "./middleware/requestLogger.js";
-
-app.use(requestLogger);
-import {
-  helmetMiddleware,
-  corsMiddleware,
-  compressionMiddleware,
-  apiLimiter
-} from "./config/security.js";
-
-app.use(helmetMiddleware);
-app.use(corsMiddleware);
-app.use(compressionMiddleware);
-app.use(apiLimiter);
-
