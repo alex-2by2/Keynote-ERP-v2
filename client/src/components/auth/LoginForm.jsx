@@ -38,10 +38,18 @@ export default function LoginForm({
       const response =
         await AuthService.login(form);
 
+      if (!response.success) {
+        throw new Error(
+          response.message || "Invalid email or password."
+        );
+      }
+
       login({
         accessToken:
-          response.accessToken,
-        user: response.user
+          response.data.accessToken,
+        refreshToken:
+          response.data.refreshToken,
+        user: response.data.user
       });
 
       navigate("/app", {
@@ -49,7 +57,7 @@ export default function LoginForm({
       });
     } catch (err) {
       setError(
-        err?.response?.data?.message ||
+        err?.message ||
         "Invalid email or password."
       );
     } finally {

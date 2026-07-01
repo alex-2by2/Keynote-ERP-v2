@@ -1,24 +1,14 @@
 // client/src/services/auth.service.js
 
-import apiClient from "../api/apiClient";
+import apiClient from "./api";
 
 class AuthService {
   async login(credentials) {
-    const response = await apiClient.post(
-      "/auth/login",
-      credentials
-    );
-
-    return response.data;
+    return apiClient.post("/auth/login", credentials);
   }
 
   async refresh(refreshToken) {
-    const response = await apiClient.post(
-      "/auth/refresh",
-      { refreshToken }
-    );
-
-    return response.data;
+    return apiClient.post("/auth/refresh", { refreshToken });
   }
 
   async logout(refreshToken) {

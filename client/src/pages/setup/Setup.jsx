@@ -55,18 +55,17 @@ export default function Setup() {
       setError("");
 
       const response = await SetupService.initialize(form);
-      const result = response.data;
 
-      if (!result.success) {
+      if (!response.success) {
         throw new Error(
-          result.message || "Setup failed."
+          response.message || "Setup failed."
         );
       }
 
       login({
-        accessToken: result.data.accessToken,
-        refreshToken: result.data.refreshToken,
-        user: result.data.user
+        accessToken: response.data.accessToken,
+        refreshToken: response.data.refreshToken,
+        user: response.data.user
       });
 
       navigate("/app", {
@@ -74,7 +73,7 @@ export default function Setup() {
       });
 
     } catch (err) {
-      setError(err.message);
+      setError(err?.message || "Setup failed.");
     } finally {
       setLoading(false);
     }

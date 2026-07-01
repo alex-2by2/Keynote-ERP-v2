@@ -1,4 +1,4 @@
-import apiClient from "../api/apiClient";
+import apiClient from "./api";
 
 export function createCrudService(resourcePath) {
   const normalizedPath = resourcePath.startsWith("/") ? resourcePath : `/${resourcePath}`;

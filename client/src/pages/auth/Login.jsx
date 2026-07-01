@@ -22,7 +22,11 @@ export default function Login() {
       try {
         const response = await SetupService.getStatus();
 
-        if (isMounted && response?.data?.success && !response.data.data.initialized) {
+        if (
+          isMounted &&
+          response?.success &&
+          !response.data?.initialized
+        ) {
           navigate("/setup", {
             replace: true
           });
