@@ -3,9 +3,22 @@
 import Company from "../models/Company.js";
 
 export default class CompanyRepository {
-  static async create(payload) {
-    return Company.create(payload);
+  static async create(
+  payload,
+  session = null
+) {
+  if (session) {
+    const [company] =
+      await Company.create(
+        [payload],
+        { session }
+      );
+
+    return company;
   }
+
+  return Company.create(payload);
+}
 
   static async findById(id) {
     return Company.findById(id).populate(
