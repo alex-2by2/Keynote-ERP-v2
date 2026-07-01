@@ -6,7 +6,10 @@ import FinancialYearRepository from "../repositories/FinancialYearRepository.js"
 import CompanyRepository from "../repositories/CompanyRepository.js";
 
 export default class FinancialYearService {
-  static async create(payload) {
+ static async create(
+  payload,
+  session = null
+) {
     const company = await CompanyRepository.findById(
       payload.company
     );
