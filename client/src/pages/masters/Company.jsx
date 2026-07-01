@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 
 import CompanyService from "../../services/company.service";
 import CompanyForm from "../../components/masters/CompanyForm";
-import { useEffect, useState } from "react";
 
 export default function Company() {
   const [companies, setCompanies] =
