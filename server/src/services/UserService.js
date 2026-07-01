@@ -5,7 +5,10 @@ import AppError from "../utils/AppError.js";
 import { hashPassword } from "../utils/password.js";
 
 export default class UserService {
-  static async create(payload) {
+ static async create(
+  payload,
+  session = null
+) {
     const email = payload.email.trim().toLowerCase();
 
     const exists = await UserRepository.existsByEmail(email);
@@ -18,13 +21,19 @@ export default class UserService {
       );
     }
 
-    const user = await UserRepository.create({
+   const user =
+  await UserRepository.create(
+    {
       ...payload,
       email,
-      password: hashPassword(payload.password)
-    });
+      password: hashPassword(
+        payload.password
+      )
+    },
+    session
+  );
 
-    return user;
+return user;
   }
 
   static async getById(id) {
