@@ -16,26 +16,24 @@ export default class RoleRepository {
   return Role.create(payload);
 }
   static async findById(id) {
-    return Role.findById(id).populate("permissions");
+    return Role.findById(id);
   }
 
   static async findByCode(code) {
     return Role.findOne({
       code: code.trim().toUpperCase()
-    }).populate("permissions");
+    });
   }
 
   static async list(filter = {}) {
-    return Role.find(filter)
-      .populate("permissions")
-      .sort({ name: 1 });
+    return Role.find(filter).sort({ name: 1 });
   }
 
   static async update(id, payload) {
     return Role.findByIdAndUpdate(id, payload, {
       new: true,
       runValidators: true
-    }).populate("permissions");
+    });
   }
 
   static async delete(id) {
