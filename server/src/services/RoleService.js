@@ -82,25 +82,24 @@ export default class RoleService {
 
     return RoleRepository.delete(id);
   }
-static async seedDefaults(session = null) {
-  const { DEFAULT_ROLES } = await import(
-    "../seed/roles.seed.js"
-  );
 
-  const createdRoles = [];
+  static async seedDefaults(session = null) {
+    const { DEFAULT_ROLES } = await import(
+      "../seed/roles.seed.js"
+    );
 
-  for (const role of DEFAULT_ROLES) {
-    const exists =
-      await RoleRepository.existsByCode(
+    const createdRoles = [];
+
+    for (const role of DEFAULT_ROLES) {
+      const exists = await RoleRepository.existsByCode(
         role.code
       );
 
-    if (exists) {
-      continue;
-    }
+      if (exists) {
+        continue;
+      }
 
-    const created =
-      await RoleRepository.create(
+      const created = await RoleRepository.create(
         {
           ...role,
           active: true
@@ -108,16 +107,18 @@ static async seedDefaults(session = null) {
         session
       );
 
-    createdRoles.push(created);
+      createdRoles.push(created);
+    }
+
+    return createdRoles;
   }
 
-  return createdRoles;
-}
   static async #resolvePermissions(permissionIds) {
     const resolved = [];
 
     for (const id of permissionIds) {
-      const permission = await PermissionRepository.findById(id);
+      const permission =
+        await PermissionRepository.findById(id);
 
       if (!permission) {
         throw new AppError(
