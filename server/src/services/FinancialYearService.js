@@ -62,10 +62,13 @@ export default class FinancialYearService {
       }
     }
 
-    return FinancialYearRepository.create({
-      ...payload,
-      code
-    });
+    return FinancialYearRepository.create(
+  {
+    ...payload,
+    code
+  },
+  session
+);
   }
 
   static async getById(id) {
