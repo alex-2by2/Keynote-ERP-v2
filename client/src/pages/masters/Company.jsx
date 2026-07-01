@@ -36,6 +36,26 @@ export default function Company() {
     setSaving(false);
   }
 };
+  const handleDelete = async id => {
+  const confirmed = window.confirm(
+    "Are you sure you want to delete this company?"
+  );
+
+  if (!confirmed) {
+    return;
+  }
+
+  try {
+    await CompanyService.delete(id);
+
+    await loadCompanies();
+  } catch (err) {
+    setError(
+      err?.response?.data?.message ||
+      "Unable to delete company."
+    );
+  }
+};
 
   const loadCompanies = async () => {
     try {
@@ -77,6 +97,7 @@ export default function Company() {
             <th>Code</th>
             <th>Name</th>
             <th>Status</th>
+            <th>Actions</th>
           </tr>
         </thead>
 
@@ -90,6 +111,16 @@ export default function Company() {
                   ? "Active"
                   : "Inactive"}
               </td>
+              <td>
+  <button
+    type="button"
+    onClick={() =>
+      handleDelete(company._id)
+    }
+  >
+    Delete
+  </button>
+</td>
             </tr>
           ))}
         </tbody>
