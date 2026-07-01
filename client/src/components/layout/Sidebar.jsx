@@ -1,3 +1,5 @@
+import { NavLink } from "react-router-dom";
+
 const menus = [
   {
     name: "Dashboard",
@@ -44,3 +46,19 @@ const menus = [
     path: "/app/settings"
   }
 ];
+
+export default function Sidebar() {
+  return (
+    <aside className="sidebar">
+      <h2>Keynote ERP</h2>
+
+      <nav>
+        {menus.map((menu) => (
+          <NavLink key={menu.path} to={menu.path}>
+            {menu.name}
+          </NavLink>
+        ))}
+      </nav>
+    </aside>
+  );
+}
