@@ -1,16 +1,52 @@
-import { useState } from "react";
-import { Navigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import {
+  Navigate,
+  useNavigate
+} from "react-router-dom";
 
 import LoginForm from "../../components/auth/LoginForm";
 import { useAuth } from "../../store/authStore";
 
 export default function Login() {
+  const navigate = useNavigate();
+
   const { isAuthenticated } = useAuth();
 
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    async function checkSetup() {
+      try {
+        const response = await fetch(
+          "/api/setup/status"
+        );
+
+        const result =
+          await response.json();
+
+        if (
+          result.success &&
+          !result.data.initialized
+        ) {
+          navigate("/setup", {
+            replace: true
+          });
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    checkSetup();
+  }, [navigate]);
+
   if (isAuthenticated) {
-    return <Navigate to="/app" replace />;
+    return (
+      <Navigate
+        to="/app"
+        replace
+      />
+    );
   }
 
   return (
