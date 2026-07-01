@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 import CompanyService from "../../services/company.service";
 import CompanyForm from "../../components/masters/CompanyForm";
+import { useEffect, useState } from "react";
 
 export default function Company() {
   const [companies, setCompanies] =
@@ -16,15 +17,26 @@ export default function Company() {
     useState("");
   const [saving, setSaving] =
   useState(false);
+  const [editingCompany, setEditingCompany] =
+  useState(null);
 
   useEffect(() => {
     loadCompanies();
   }, []);
-  const handleCreate = async data => {
+ const handleSave = async data => {
   try {
     setSaving(true);
 
-    await CompanyService.create(data);
+    if (editingCompany) {
+      await CompanyService.update(
+        editingCompany._id,
+        data
+      );
+    } else {
+      await CompanyService.create(data);
+    }
+
+    setEditingCompany(null);
 
     await loadCompanies();
   } catch (err) {
@@ -56,7 +68,10 @@ export default function Company() {
     );
   }
 };
-
+const handleEdit = company => {
+  setEditingCompany(company);
+};
+  
   const loadCompanies = async () => {
     try {
       setLoading(true);
@@ -89,9 +104,11 @@ export default function Company() {
       <h1>Companies</h1>
 <CompanyForm
   loading={saving}
-  onSubmit={handleCreate}
-/>
-      <table>
+  initialValues={
+    editingCompany || undefined
+  }
+  onSubmit={handleSave}
+/>      <table>
         <thead>
           <tr>
             <th>Code</th>
@@ -111,7 +128,16 @@ export default function Company() {
                   ? "Active"
                   : "Inactive"}
               </td>
-              <td>
+            <td>
+  <button
+    type="button"
+    onClick={() =>
+      handleEdit(company)
+    }
+  >
+    Edit
+  </button>
+
   <button
     type="button"
     onClick={() =>
