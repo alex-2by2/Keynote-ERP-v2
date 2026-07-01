@@ -3,10 +3,22 @@
 import Permission from "../models/Permission.js";
 
 export default class PermissionRepository {
-  static async create(payload) {
-    return Permission.create(payload);
+static async create(
+  payload,
+  session = null
+) {
+  if (session) {
+    const [permission] =
+      await Permission.create(
+        [payload],
+        { session }
+      );
+
+    return permission;
   }
 
+  return Permission.create(payload);
+}
   static async findById(id) {
     return Permission.findById(id);
   }
