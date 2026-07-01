@@ -42,6 +42,7 @@ import purchaseInvoiceRoutes from "./purchaseInvoice.routes.js";
 import salesInvoiceRoutes from "./salesInvoice.routes.js";
 import paymentRoutes from "./payment.routes.js";
 import receiptRoutes from "./receipt.routes.js";
+import setupRoutes from "./setup.routes.js";
 
 const router = Router();
 
@@ -91,5 +92,6 @@ router.use(
 );
 router.use("/payments", paymentRoutes);
 router.use("/receipts", receiptRoutes);
+router.use("/setup", setupRoutes);
 
 export default router;
