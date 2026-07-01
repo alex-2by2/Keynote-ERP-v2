@@ -15,11 +15,15 @@ export function AuthProvider({ children }) {
     return value ? JSON.parse(value) : null;
   });
 
-  const login = ({ accessToken, user }) => {
+  const login = ({ accessToken, refreshToken, user }) => {
     localStorage.setItem(
       "accessToken",
       accessToken
     );
+
+    if (refreshToken) {
+      localStorage.setItem("refreshToken", refreshToken);
+    }
 
     localStorage.setItem(
       "user",
@@ -32,6 +36,7 @@ export function AuthProvider({ children }) {
 
   const logout = () => {
     localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
     localStorage.removeItem("user");
 
     setToken(null);

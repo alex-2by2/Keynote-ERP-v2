@@ -5,6 +5,7 @@ import {
 } from "react-router-dom";
 
 import LoginForm from "../../components/auth/LoginForm";
+import SetupService from "../../services/setup.service";
 import { useAuth } from "../../store/authStore";
 
 export default function Login() {
@@ -15,19 +16,13 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    let isMounted = true;
+
     async function checkSetup() {
       try {
-        const response = await fetch(
-          "/api/setup/status"
-        );
+        const response = await SetupService.getStatus();
 
-        const result =
-          await response.json();
-
-        if (
-          result.success &&
-          !result.data.initialized
-        ) {
+        if (isMounted && response?.data?.success && !response.data.data.initialized) {
           navigate("/setup", {
             replace: true
           });
@@ -38,6 +33,10 @@ export default function Login() {
     }
 
     checkSetup();
+
+    return () => {
+      isMounted = false;
+    };
   }, [navigate]);
 
   if (isAuthenticated) {

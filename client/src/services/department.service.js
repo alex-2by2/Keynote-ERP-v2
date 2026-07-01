@@ -1,3 +1,3 @@
 import { createCrudService } from "./resource.service";
 
-export default createCrudService("/companies");
+export default createCrudService("/departments");

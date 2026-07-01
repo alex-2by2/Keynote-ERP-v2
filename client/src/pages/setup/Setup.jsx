@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import SetupService from "../../services/setup.service";
 import { useAuth } from "../../store/authStore";
 
 export default function Setup() {
@@ -53,18 +54,8 @@ export default function Setup() {
       setLoading(true);
       setError("");
 
-      const response = await fetch(
-        "/api/setup/initialize",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(form)
-        }
-      );
-
-      const result = await response.json();
+      const response = await SetupService.initialize(form);
+      const result = response.data;
 
       if (!result.success) {
         throw new Error(
@@ -73,8 +64,8 @@ export default function Setup() {
       }
 
       login({
-        accessToken:
-          result.data.accessToken,
+        accessToken: result.data.accessToken,
+        refreshToken: result.data.refreshToken,
         user: result.data.user
       });
 

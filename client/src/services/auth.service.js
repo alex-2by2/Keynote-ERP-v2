@@ -12,16 +12,22 @@ class AuthService {
     return response.data;
   }
 
-  async getProfile() {
-    const response = await apiClient.get(
-      "/auth/profile"
+  async refresh(refreshToken) {
+    const response = await apiClient.post(
+      "/auth/refresh",
+      { refreshToken }
     );
 
     return response.data;
   }
 
-  async logout() {
+  async logout(refreshToken) {
+    if (refreshToken) {
+      await apiClient.post("/auth/logout", { refreshToken });
+    }
+
     localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
     localStorage.removeItem("user");
   }
 }

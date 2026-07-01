@@ -1,28 +1,26 @@
 // client/src/components/layout/Header.jsx
 
-import {
-  useNavigate
-} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-import {
-  useAuth
-} from "../../store/authStore";
+import AuthService from "../../services/auth.service";
+import { useAuth } from "../../store/authStore";
 
 export default function Header() {
-  const navigate =
-    useNavigate();
+  const navigate = useNavigate();
 
-  const {
-    user,
-    logout
-  } = useAuth();
+  const { user, logout } = useAuth();
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    const refreshToken = localStorage.getItem("refreshToken");
 
-    navigate("/", {
-      replace: true
-    });
+    try {
+      await AuthService.logout(refreshToken);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      logout();
+      navigate("/", { replace: true });
+    }
   };
 
   return (
