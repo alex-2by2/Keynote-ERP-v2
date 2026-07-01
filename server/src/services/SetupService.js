@@ -1,7 +1,19 @@
 // server/src/services/SetupService.js
 
-import SetupRepository from "../repositories/SetupRepository.js";
+import mongoose from "mongoose";
+
 import AppError from "../utils/AppError.js";
+
+import SetupRepository from "../repositories/SetupRepository.js";
+
+import CompanyService from "./CompanyService.js";
+import UserService from "./UserService.js";
+import FinancialYearService from "./FinancialYearService.js";
+import PermissionService from "./PermissionService.js";
+import RoleService from "./RoleService.js";
+import RefreshTokenService from "./RefreshTokenService.js";
+
+import { generateAccessToken } from "../utils/jwt.js";
 
 export default class SetupService {
   static async isInitialized() {
@@ -20,11 +32,105 @@ export default class SetupService {
       );
     }
 
-    return {
-      initialized: false,
-      message:
-        "Initialization logic will be added in the next step.",
-      payload
-    };
+    const session =
+      await mongoose.startSession();
+
+    session.startTransaction();
+
+    try {
+      const {
+        company,
+        owner,
+        financialYear
+      } = payload;
+
+      // Seed Default Permissions
+      await PermissionService.seedDefaults(
+        session
+      );
+
+      // Seed Default Roles
+      await RoleService.seedDefaults(
+        session
+      );
+
+      // Create Company
+      const createdCompany =
+        await CompanyService.create(
+          company,
+          session
+        );
+            // Create Owner User
+      const createdOwner =
+        await UserService.create(
+          {
+            firstName: owner.firstName,
+            lastName: owner.lastName,
+            email: owner.email,
+            password: owner.password,
+
+            // Temporary until RBAC migration
+            role: "admin",
+
+            isActive: true
+          },
+          session
+        );
+
+      // Create Financial Year
+      const createdFinancialYear =
+        await FinancialYearService.create(
+          {
+            ...financialYear,
+            company: createdCompany._id,
+            isCurrent: true
+          },
+          session
+        );
+
+      // Generate JWT Access Token
+      const accessToken =
+        generateAccessToken({
+          sub: createdOwner.id,
+          role: createdOwner.role,
+          email: createdOwner.email
+        });
+
+      // Issue Refresh Token
+      const refreshToken =
+        await RefreshTokenService.issue(
+          createdOwner.id
+        );
+            // Commit Transaction
+      await session.commitTransaction();
+
+      return {
+        initialized: true,
+
+        accessToken,
+
+        refreshToken: refreshToken.token,
+
+        expiresAt: refreshToken.expiresAt,
+
+        company: createdCompany,
+
+        financialYear: createdFinancialYear,
+
+        user: {
+          id: createdOwner.id,
+          firstName: createdOwner.firstName,
+          lastName: createdOwner.lastName,
+          email: createdOwner.email,
+          role: createdOwner.role
+        }
+      };
+    } catch (error) {
+      await session.abortTransaction();
+
+      throw error;
+    } finally {
+      session.endSession();
+    }
   }
 }
