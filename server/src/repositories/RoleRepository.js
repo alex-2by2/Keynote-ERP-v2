@@ -3,10 +3,18 @@
 import Role from "../models/Role.js";
 
 export default class RoleRepository {
-  static async create(payload) {
-    return Role.create(payload);
+ static async create(payload, session = null) {
+  if (session) {
+    const [role] = await Role.create(
+      [payload],
+      { session }
+    );
+
+    return role;
   }
 
+  return Role.create(payload);
+}
   static async findById(id) {
     return Role.findById(id).populate("permissions");
   }
