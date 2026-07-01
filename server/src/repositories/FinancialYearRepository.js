@@ -7,13 +7,12 @@ export default class FinancialYearRepository {
     return FinancialYear.create(payload);
   }
 
-  static async findById(id) {
-    return FinancialYear.findById().populate(
-      "company",
-      "code legalName displayName"
-    );
-  }
-
+ static async findById(id) {
+  return FinancialYear.findById(id).populate(
+    "company",
+    "code legalName displayName"
+  );
+}
   static async findByCode(companyId, code) {
     return FinancialYear.findOne({
       company: companyId,
