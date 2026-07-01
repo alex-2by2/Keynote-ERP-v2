@@ -63,3 +63,35 @@ export default class PermissionService {
     return PermissionRepository.delete(id);
   }
 }
+
+static async seedDefaults(session = null) {
+  const { DEFAULT_PERMISSIONS } = await import(
+    "../seed/permissions.seed.js"
+  );
+
+  const createdPermissions = [];
+
+  for (const permission of DEFAULT_PERMISSIONS) {
+    const exists =
+      await PermissionRepository.existsByCode(
+        permission.code
+      );
+
+    if (exists) {
+      continue;
+    }
+
+    const created =
+      await PermissionRepository.create(
+        {
+          ...permission,
+          active: true
+        },
+        session
+      );
+
+    createdPermissions.push(created);
+  }
+
+  return createdPermissions;
+}
