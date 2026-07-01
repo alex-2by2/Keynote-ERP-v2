@@ -15,6 +15,7 @@ import Company from "./pages/masters/Company";
 import Customer from "./pages/masters/Customer";
 import Supplier from "./pages/masters/Supplier";
 import Item from "./pages/masters/Item";
+import Setup from "./pages/setup/Setup";
 
 export default function App() {
   return (
@@ -54,6 +55,30 @@ export default function App() {
   path="masters/items"
   element={<Item />}
 />
+          <Routes>
+
+  <Route
+    path="/setup"
+    element={<Setup />}
+  />
+
+  <Route
+    path="/"
+    element={<Login />}
+  />
+
+  <Route
+    element={<ProtectedRoute />}
+  >
+    <Route
+      path="/app"
+      element={<AppLayout />}
+    >
+      ...
+    </Route>
+  </Route>
+
+</Routes>
         </Route>
       </Route>
     </Routes>
