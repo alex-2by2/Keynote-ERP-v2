@@ -20,26 +20,44 @@ export default class CompanyRepository {
   return Company.create(payload);
 }
 
-  static async findById(id) {
-    return Company.findById(id).populate(
+  static async findById(id, session = null) {
+    const query = Company.findById(id).populate(
       "headquarters",
       "code name city state country"
     );
+
+    if (session) {
+      query.session(session);
+    }
+
+    return query;
   }
 
-  static async findByCode(code) {
-    return Company.findOne({
+  static async findByCode(code, session = null) {
+    const query = Company.findOne({
       code: code.trim().toUpperCase()
     }).populate(
       "headquarters",
       "code name city state country"
     );
+
+    if (session) {
+      query.session(session);
+    }
+
+    return query;
   }
 
-  static async existsByCode(code) {
-    return Company.exists({
+  static async existsByCode(code, session = null) {
+    const query = Company.exists({
       code: code.trim().toUpperCase()
     });
+
+    if (session) {
+      query.session(session);
+    }
+
+    return query;
   }
 
   static async list(filter = {}) {

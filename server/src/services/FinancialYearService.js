@@ -11,7 +11,8 @@ export default class FinancialYearService {
   session = null
 ) {
     const company = await CompanyRepository.findById(
-      payload.company
+      payload.company,
+      session
     );
 
     if (!company) {
