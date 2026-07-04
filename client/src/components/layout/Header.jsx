@@ -10,6 +10,10 @@ export default function Header() {
 
   const { user, logout } = useAuth();
 
+  const displayName = user?.firstName
+    ? [user.firstName, user.lastName].filter(Boolean).join(" ")
+    : "User";
+
   const handleLogout = async () => {
     const refreshToken = localStorage.getItem("refreshToken");
 
@@ -28,7 +32,7 @@ export default function Header() {
       <div>
         Welcome,
         {" "}
-        {user?.name || "User"}
+        {displayName}
       </div>
 
       <button
