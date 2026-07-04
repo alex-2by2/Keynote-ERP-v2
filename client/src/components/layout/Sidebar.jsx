@@ -54,7 +54,11 @@ export default function Sidebar() {
 
       <nav>
         {menus.map((menu) => (
-          <NavLink key={menu.path} to={menu.path}>
+          <NavLink
+            key={menu.path}
+            to={menu.path}
+            end={menu.path === "/app"}
+          >
             {menu.name}
           </NavLink>
         ))}
