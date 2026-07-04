@@ -1,0 +1,346 @@
+/* ==========================================================================
+   Keynote ERP — global stylesheet
+   A "keynote" is the tone everything else is tuned to — so this file
+   defines one small set of tokens (color/type/space) and everything in
+   the app reads off them.
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
+
+/* --- Tokens -------------------------------------------------------------- */
+
+:root {
+  /* Color */
+  --ink: #1a2233;          /* primary text, sidebar background */
+  --ink-soft: #2c3a52;     /* sidebar hover background */
+  --paper: #f3f4f7;        /* app shell background */
+  --surface: #ffffff;      /* cards, tables, inputs */
+  --line: #e1e3e9;         /* borders, dividers */
+  --muted: #64748b;        /* secondary text, placeholders */
+
+  --keynote: #bd8a3d;         /* signature accent — brass */
+  --keynote-deep: #96692b;    /* accent hover / button fill */
+  --keynote-tint: #fbf1e1;    /* accent-tinted background */
+
+  --success: #3e8f6c;
+  --success-tint: #e6f2ec;
+  --danger: #c1503f;
+  --danger-tint: #fbeae7;
+
+  /* Type */
+  --font-sans: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+
+  /* Space + shape */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+
+  --shadow-card: 0 1px 2px rgba(23, 32, 46, 0.04), 0 8px 24px -8px rgba(23, 32, 46, 0.12);
+}
+
+/* --- Reset ---------------------------------------------------------------- */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body, #root { height: 100%; }
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 15px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+:focus-visible {
+  outline: 2px solid var(--keynote);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* --- Typography ------------------------------------------------------------ */
+
+h1, h2, h3 {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin: 0 0 var(--space-4);
+}
+
+h1 { font-size: 1.6rem; }
+
+h2 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--line);
+}
+
+p { margin: 0 0 var(--space-3); }
+
+a { color: var(--keynote-deep); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* --- Forms ------------------------------------------------------------- */
+
+form { display: flex; flex-direction: column; gap: var(--space-4); }
+
+label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: var(--space-1);
+}
+
+input, select, textarea {
+  display: block;
+  width: 100%;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--ink);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--keynote);
+  box-shadow: 0 0 0 3px var(--keynote-tint);
+}
+
+input::placeholder, textarea::placeholder { color: var(--muted); opacity: 0.85; }
+
+/* --- Buttons ------------------------------------------------------------ */
+
+button {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 0.88rem;
+  padding: 0.6rem 1.1rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease, transform 0.05s ease;
+}
+
+button:hover { border-color: var(--keynote); color: var(--keynote-deep); }
+button:active { transform: translateY(1px); }
+button:disabled { opacity: 0.55; cursor: not-allowed; }
+
+button[type="submit"] {
+  background: var(--keynote-deep);
+  border-color: var(--keynote-deep);
+  color: #fff;
+}
+
+button[type="submit"]:hover { background: #7d571f; border-color: #7d571f; color: #fff; }
+
+/* --- Error / status text ------------------------------------------------ */
+
+.error-message {
+  background: var(--danger-tint);
+  color: var(--danger);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-3);
+  font-size: 0.85rem;
+}
+
+/* --- App shell: sidebar + header + content ------------------------------ */
+
+.app-layout { display: flex; min-height: 100vh; }
+
+.sidebar {
+  width: 240px;
+  flex-shrink: 0;
+  background: var(--ink);
+  color: #fff;
+  padding: var(--space-5) var(--space-4);
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar h2 {
+  color: #fff;
+  font-size: 1.1rem;
+  border-bottom: none;
+  padding-bottom: 0;
+  margin: 0 0 var(--space-6) var(--space-2);
+}
+
+.sidebar nav { display: flex; flex-direction: column; gap: var(--space-1); }
+
+.sidebar nav a {
+  display: block;
+  color: rgba(255, 255, 255, 0.68);
+  padding: 0.6rem var(--space-3);
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.sidebar nav a:hover { background: var(--ink-soft); color: #fff; }
+
+.sidebar nav a.active,
+.sidebar nav a[aria-current="page"] {
+  background: var(--keynote);
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.app-main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-4) var(--space-6);
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+  font-size: 0.9rem;
+}
+
+.header button { padding: 0.5rem 1rem; font-size: 0.82rem; }
+
+.app-content { flex: 1; padding: var(--space-6); overflow-y: auto; }
+
+.page { max-width: 960px; }
+
+.dashboard-page { max-width: 720px; }
+.dashboard-page p { color: var(--muted); }
+
+/* --- Tables (masters lists) ---------------------------------------------- */
+
+.page table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  margin-top: var(--space-5);
+}
+
+.page thead th {
+  text-align: left;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  background: var(--paper);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--line);
+}
+
+.page tbody td {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--line);
+  font-size: 0.88rem;
+}
+
+.page tbody tr:last-child td { border-bottom: none; }
+.page tbody tr:hover td { background: var(--paper); }
+
+.page tbody td:first-child {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.page tbody td button {
+  padding: 0.35rem 0.7rem;
+  font-size: 0.78rem;
+  margin-right: var(--space-2);
+}
+
+/* --- Login ---------------------------------------------------------------- */
+
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--ink);
+  background-image:
+    radial-gradient(circle at 18% 20%, rgba(189, 138, 61, 0.20), transparent 45%),
+    radial-gradient(circle at 82% 78%, rgba(189, 138, 61, 0.12), transparent 40%);
+  padding: var(--space-5);
+}
+
+.login-container { width: 100%; max-width: 400px; }
+
+.login-card {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-7) var(--space-6);
+}
+
+.login-header { text-align: center; margin-bottom: var(--space-6); }
+.login-header h1 { font-size: 1.5rem; margin-bottom: var(--space-1); }
+.login-header p { color: var(--muted); margin: 0; font-size: 0.9rem; }
+
+.login-card button[type="submit"] { width: 100%; margin-top: var(--space-1); padding: 0.75rem; }
+
+/* --- Setup wizard --------------------------------------------------------- */
+
+.setup-page {
+  max-width: 640px;
+  margin: var(--space-7) auto;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-6);
+}
+
+.setup-page h2 { margin-top: var(--space-3); font-size: 1rem; }
+.setup-page button[type="submit"] { align-self: flex-start; padding: 0.75rem 1.5rem; }
+
+/* --- Responsive floor ------------------------------------------------------ */
+
+@media (max-width: 760px) {
+  .app-layout { flex-direction: column; }
+
+  .sidebar {
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    padding: var(--space-3) var(--space-4);
+    overflow-x: auto;
+  }
+
+  .sidebar h2 { margin: 0 var(--space-4) 0 0; font-size: 1rem; white-space: nowrap; }
+  .sidebar nav { flex-direction: row; }
+  .sidebar nav a { white-space: nowrap; }
+
+  .app-content { padding: var(--space-4); }
+  .login-card { padding: var(--space-5) var(--space-4); }
+  .setup-page { margin: var(--space-4); padding: var(--space-4); }
+}
