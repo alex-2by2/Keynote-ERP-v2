@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 import AppError from "../utils/AppError.js";
 
 import SetupRepository from "../repositories/SetupRepository.js";
+import UserRoleRepository from "../repositories/UserRoleRepository.js";
 
 import CompanyService from "./CompanyService.js";
 import UserService from "./UserService.js";
@@ -50,9 +51,21 @@ export default class SetupService {
       );
 
       // Seed Default Roles
-      await RoleService.seedDefaults(
+      const createdRoles = await RoleService.seedDefaults(
         session
       );
+
+      const ownerRole = createdRoles.find(
+        role => role.code === "OWNER"
+      );
+
+      if (!ownerRole) {
+        throw new AppError(
+          "Owner role could not be created.",
+          500,
+          "OWNER_ROLE_MISSING"
+        );
+      }
 
       // Create Company
       const createdCompany =
@@ -69,13 +82,27 @@ export default class SetupService {
             email: owner.email,
             password: owner.password,
 
-            // Temporary until RBAC migration
+            // Legacy field — still checked by the authorize()
+            // middleware across existing routes
             role: "admin",
 
             isActive: true
           },
           session
         );
+
+      // Link Owner to the seeded RBAC "OWNER" role
+      // (source of truth once routes migrate off the
+      // legacy role string above)
+      await UserRoleRepository.create(
+        {
+          user: createdOwner._id,
+          role: ownerRole._id,
+          company: createdCompany._id,
+          active: true
+        },
+        session
+      );
 
       // Create Financial Year
       const createdFinancialYear =
