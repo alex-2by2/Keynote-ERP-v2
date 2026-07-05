@@ -8,6 +8,8 @@ import Company from "./pages/masters/Company";
 import Customer from "./pages/masters/Customer";
 import Supplier from "./pages/masters/Supplier";
 import Item from "./pages/masters/Item";
+import ItemCategory from "./pages/masters/ItemCategory";
+import UnitOfMeasure from "./pages/masters/UnitOfMeasure";
 import Setup from "./pages/setup/Setup";
 import Purchase from "./pages/purchase/Purchase";
 import Sales from "./pages/sales/Sales";
@@ -30,6 +32,8 @@ export default function App() {
           <Route path="masters/customers" element={<Customer />} />
           <Route path="masters/suppliers" element={<Supplier />} />
           <Route path="masters/items" element={<Item />} />
+          <Route path="masters/item-categories" element={<ItemCategory />} />
+          <Route path="masters/units" element={<UnitOfMeasure />} />
           <Route path="purchase" element={<Purchase />} />
           <Route path="sales" element={<Sales />} />
           <Route path="inventory" element={<Inventory />} />
