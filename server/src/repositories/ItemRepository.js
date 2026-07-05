@@ -48,6 +48,19 @@ export default class ItemRepository {
     });
   }
 
+  static async existsByBarcode(companyId, barcode, excludeId = null) {
+    const filter = {
+      company: companyId,
+      barcode: barcode.trim()
+    };
+
+    if (excludeId) {
+      filter._id = { $ne: excludeId };
+    }
+
+    return Item.exists(filter);
+  }
+
   static async list(filter = {}) {
     return Item.find(filter)
       .populate("company", "code displayName")
