@@ -22,6 +22,14 @@ const menus = [
     path: "/app/masters/items"
   },
   {
+    name: "Item Categories",
+    path: "/app/masters/item-categories"
+  },
+  {
+    name: "Units of Measure",
+    path: "/app/masters/units"
+  },
+  {
     name: "Purchase",
     path: "/app/purchase"
   },
