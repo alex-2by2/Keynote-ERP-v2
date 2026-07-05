@@ -44,7 +44,7 @@ export default function CompanyForm({
   return (
     <form onSubmit={handleSubmit}>
       {error && (
-        <p>{error}</p>
+        <p className="error-message">{error}</p>
       )}
 
       <div>
