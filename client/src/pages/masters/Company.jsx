@@ -23,16 +23,22 @@ export default function Company() {
     loadCompanies();
   }, []);
  const handleSave = async data => {
+  const payload = {
+    code: data.code,
+    legalName: data.name,
+    displayName: data.name
+  };
+
   try {
     setSaving(true);
 
     if (editingCompany) {
       await CompanyService.update(
         editingCompany._id,
-        data
+        payload
       );
     } else {
-      await CompanyService.create(data);
+      await CompanyService.create(payload);
     }
 
     setEditingCompany(null);
@@ -102,9 +108,15 @@ const handleEdit = company => {
     <div className="page">
       <h1>Companies</h1>
 <CompanyForm
+  key={editingCompany?._id || "new"}
   loading={saving}
   initialValues={
-    editingCompany || undefined
+    editingCompany
+      ? {
+          code: editingCompany.code,
+          name: editingCompany.displayName
+        }
+      : undefined
   }
   onSubmit={handleSave}
 />      <table>
@@ -121,9 +133,9 @@ const handleEdit = company => {
           {companies.map(company => (
             <tr key={company._id}>
               <td>{company.code}</td>
-              <td>{company.name}</td>
+              <td>{company.displayName}</td>
               <td>
-                {company.isActive
+                {company.active
                   ? "Active"
                   : "Inactive"}
               </td>
