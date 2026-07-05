@@ -23,6 +23,11 @@ export const createSalesInvoiceValidator = [
     .isMongoId()
     .withMessage("Invalid goods issue"),
 
+  body("warehouse")
+    .optional({ nullable: true })
+    .isMongoId()
+    .withMessage("Invalid warehouse"),
+
   body("invoiceNumber")
     .trim()
     .notEmpty()
