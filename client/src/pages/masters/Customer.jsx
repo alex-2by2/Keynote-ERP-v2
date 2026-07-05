@@ -64,9 +64,9 @@ export default function Customer() {
             <tr key={customer._id}>
               <td>{customer.code}</td>
               <td>{customer.name}</td>
-              <td>{customer.mobile}</td>
+              <td>{customer.phone}</td>
               <td>
-                {customer.isActive
+                {customer.active
                   ? "Active"
                   : "Inactive"}
               </td>
