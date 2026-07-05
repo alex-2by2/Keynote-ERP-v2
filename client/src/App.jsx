@@ -10,6 +10,9 @@ import Supplier from "./pages/masters/Supplier";
 import Item from "./pages/masters/Item";
 import ItemCategory from "./pages/masters/ItemCategory";
 import UnitOfMeasure from "./pages/masters/UnitOfMeasure";
+import Branch from "./pages/masters/Branch";
+import Warehouse from "./pages/masters/Warehouse";
+import Stock from "./pages/masters/Stock";
 import Setup from "./pages/setup/Setup";
 import Purchase from "./pages/purchase/Purchase";
 import Sales from "./pages/sales/Sales";
@@ -34,6 +37,9 @@ export default function App() {
           <Route path="masters/items" element={<Item />} />
           <Route path="masters/item-categories" element={<ItemCategory />} />
           <Route path="masters/units" element={<UnitOfMeasure />} />
+          <Route path="masters/branches" element={<Branch />} />
+          <Route path="masters/warehouses" element={<Warehouse />} />
+          <Route path="masters/stock" element={<Stock />} />
           <Route path="purchase" element={<Purchase />} />
           <Route path="sales" element={<Sales />} />
           <Route path="inventory" element={<Inventory />} />
