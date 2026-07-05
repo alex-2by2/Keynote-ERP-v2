@@ -7,6 +7,7 @@ import CustomerRepository from "../repositories/CustomerRepository.js";
 import SalesOrderRepository from "../repositories/SalesOrderRepository.js";
 import GoodsIssueRepository from "../repositories/GoodsIssueRepository.js";
 import ItemRepository from "../repositories/ItemRepository.js";
+import StockRepository from "../repositories/StockRepository.js";
 import SalesInvoiceRepository from "../repositories/SalesInvoiceRepository.js";
 
 export default class SalesInvoiceService {
@@ -144,14 +145,63 @@ export default class SalesInvoiceService {
       discountTotal +
       taxTotal;
 
-    return SalesInvoiceRepository.create({
-      ...payload,
-      invoiceNumber,
-      subTotal,
-      discountTotal,
-      taxTotal,
-      grandTotal
-    });
+    // If a warehouse was given, this is a direct/POS-style
+    // sale — confirm enough stock exists before committing.
+    if (payload.warehouse) {
+      for (const line of payload.items) {
+        const stock =
+          await StockRepository.findByWarehouseAndItem(
+            payload.company,
+            payload.warehouse,
+            line.item
+          );
+
+        const available = stock
+          ? stock.quantity
+          : 0;
+
+        if (available < Number(line.quantity)) {
+          throw new AppError(
+            `Insufficient stock. Only ${available} available.`,
+            409,
+            "INSUFFICIENT_STOCK"
+          );
+        }
+      }
+    }
+
+    const invoice =
+      await SalesInvoiceRepository.create({
+        ...payload,
+        invoiceNumber,
+        subTotal,
+        discountTotal,
+        taxTotal,
+        grandTotal
+      });
+
+    if (payload.warehouse) {
+      for (const line of payload.items) {
+        const stock =
+          await StockRepository.findByWarehouseAndItem(
+            payload.company,
+            payload.warehouse,
+            line.item
+          );
+
+        await StockRepository.update(
+          stock._id,
+          {
+            quantity:
+              stock.quantity -
+              Number(line.quantity),
+            lastIssueDate: new Date()
+          }
+        );
+      }
+    }
+
+    return invoice;
   }
 
   static async getById(id) {
