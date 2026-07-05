@@ -23,6 +23,11 @@ export const createPurchaseInvoiceValidator = [
     .isMongoId()
     .withMessage("Invalid goods receipt"),
 
+  body("warehouse")
+    .optional({ nullable: true })
+    .isMongoId()
+    .withMessage("Invalid warehouse"),
+
   body("invoiceNumber")
     .trim()
     .notEmpty()
