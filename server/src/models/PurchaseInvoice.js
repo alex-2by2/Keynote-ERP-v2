@@ -87,6 +87,12 @@ const purchaseInvoiceSchema = new Schema(
       default: null
     },
 
+    warehouse: {
+      type: Schema.Types.ObjectId,
+      ref: "Warehouse",
+      default: null
+    },
+
     voucher: {
       type: Schema.Types.ObjectId,
       ref: "Voucher",
