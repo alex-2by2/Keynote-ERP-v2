@@ -41,6 +41,18 @@ const itemSchema = new Schema(
       uppercase: true
     },
 
+    barcode: {
+      type: String,
+      trim: true,
+      default: null
+    },
+
+    hsnCode: {
+      type: String,
+      trim: true,
+      default: ""
+    },
+
     name: {
       type: String,
       required: true,
@@ -120,6 +132,17 @@ itemSchema.index(
   },
   {
     unique: true
+  }
+);
+
+itemSchema.index(
+  {
+    company: 1,
+    barcode: 1
+  },
+  {
+    unique: true,
+    sparse: true
   }
 );
 
