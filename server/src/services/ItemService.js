@@ -71,6 +71,22 @@ export default class ItemService {
       );
     }
 
+    if (payload.barcode && payload.barcode.trim()) {
+      const barcodeExists =
+        await ItemRepository.existsByBarcode(
+          company.id,
+          payload.barcode
+        );
+
+      if (barcodeExists) {
+        throw new AppError(
+          "Barcode already exists.",
+          409,
+          "ITEM_BARCODE_ALREADY_EXISTS"
+        );
+      }
+    }
+
     return ItemRepository.create({
       ...payload,
       code,
@@ -105,7 +121,7 @@ export default class ItemService {
   }
 
   static async update(id, payload) {
-    await this.getById(id);
+    const existingItem = await this.getById(id);
 
     if (payload.code) {
       payload.code = payload.code.trim().toUpperCase();
@@ -113,6 +129,23 @@ export default class ItemService {
 
     if (payload.sku) {
       payload.sku = payload.sku.trim().toUpperCase();
+    }
+
+    if (payload.barcode && payload.barcode.trim()) {
+      const barcodeExists =
+        await ItemRepository.existsByBarcode(
+          existingItem.company._id || existingItem.company,
+          payload.barcode,
+          id
+        );
+
+      if (barcodeExists) {
+        throw new AppError(
+          "Barcode already exists.",
+          409,
+          "ITEM_BARCODE_ALREADY_EXISTS"
+        );
+      }
     }
 
     return ItemRepository.update(id, payload);
