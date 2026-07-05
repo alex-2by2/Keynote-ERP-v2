@@ -7,6 +7,7 @@ import SupplierRepository from "../repositories/SupplierRepository.js";
 import PurchaseOrderRepository from "../repositories/PurchaseOrderRepository.js";
 import GoodsReceiptRepository from "../repositories/GoodsReceiptRepository.js";
 import ItemRepository from "../repositories/ItemRepository.js";
+import StockRepository from "../repositories/StockRepository.js";
 import PurchaseInvoiceRepository from "../repositories/PurchaseInvoiceRepository.js";
 
 export default class PurchaseInvoiceService {
@@ -138,14 +139,66 @@ export default class PurchaseInvoiceService {
       discountTotal +
       taxTotal;
 
-    return PurchaseInvoiceRepository.create({
-      ...payload,
-      invoiceNumber,
-      subTotal,
-      discountTotal,
-      taxTotal,
-      grandTotal
-    });
+    const invoice =
+      await PurchaseInvoiceRepository.create({
+        ...payload,
+        invoiceNumber,
+        subTotal,
+        discountTotal,
+        taxTotal,
+        grandTotal
+      });
+
+    // If a warehouse was given, receive the goods into
+    // stock and roll the average cost forward.
+    if (payload.warehouse) {
+      for (const line of payload.items) {
+        const receivedQty =
+          Number(line.quantity);
+
+        const unitCost =
+          Number(line.unitCost);
+
+        const stock =
+          await StockRepository.findByWarehouseAndItem(
+            payload.company,
+            payload.warehouse,
+            line.item
+          );
+
+        if (stock) {
+          const newQuantity =
+            stock.quantity + receivedQty;
+
+          const newAverageCost =
+            newQuantity > 0
+              ? (stock.quantity * stock.averageCost +
+                  receivedQty * unitCost) /
+                newQuantity
+              : unitCost;
+
+          await StockRepository.update(
+            stock._id,
+            {
+              quantity: newQuantity,
+              averageCost: newAverageCost,
+              lastReceiptDate: new Date()
+            }
+          );
+        } else {
+          await StockRepository.create({
+            company: payload.company,
+            warehouse: payload.warehouse,
+            item: line.item,
+            quantity: receivedQty,
+            averageCost: unitCost,
+            lastReceiptDate: new Date()
+          });
+        }
+      }
+    }
+
+    return invoice;
   }
 
   static async getById(id) {
