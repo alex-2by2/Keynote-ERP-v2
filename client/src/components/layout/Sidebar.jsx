@@ -30,6 +30,18 @@ const menus = [
     path: "/app/masters/units"
   },
   {
+    name: "Branches",
+    path: "/app/masters/branches"
+  },
+  {
+    name: "Warehouses",
+    path: "/app/masters/warehouses"
+  },
+  {
+    name: "Stock",
+    path: "/app/masters/stock"
+  },
+  {
     name: "Purchase",
     path: "/app/purchase"
   },
