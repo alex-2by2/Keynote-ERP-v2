@@ -11,7 +11,7 @@ export default class StockRepository {
     return Stock.findById(id)
       .populate("company", "code displayName")
       .populate("warehouse", "code name")
-      .populate("item", "code sku name");
+      .populate("item", "code sku name minimumStock");
   }
 
   static async findByWarehouseAndItem(
@@ -26,14 +26,14 @@ export default class StockRepository {
     })
       .populate("company", "code displayName")
       .populate("warehouse", "code name")
-      .populate("item", "code sku name");
+      .populate("item", "code sku name minimumStock");
   }
 
   static async list(filter = {}) {
     return Stock.find(filter)
       .populate("company", "code displayName")
       .populate("warehouse", "code name")
-      .populate("item", "code sku name")
+      .populate("item", "code sku name minimumStock")
       .sort({
         updatedAt: -1
       });
@@ -50,7 +50,7 @@ export default class StockRepository {
     )
       .populate("company", "code displayName")
       .populate("warehouse", "code name")
-      .populate("item", "code sku name");
+      .populate("item", "code sku name minimumStock");
   }
 
   static async delete(id) {
