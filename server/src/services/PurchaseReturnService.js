@@ -6,6 +6,7 @@ import CompanyRepository from "../repositories/CompanyRepository.js";
 import SupplierRepository from "../repositories/SupplierRepository.js";
 import WarehouseRepository from "../repositories/WarehouseRepository.js";
 import ItemRepository from "../repositories/ItemRepository.js";
+import StockRepository from "../repositories/StockRepository.js";
 import PurchaseReturnRepository from "../repositories/PurchaseReturnRepository.js";
 
 export default class PurchaseReturnService {
@@ -80,11 +81,54 @@ export default class PurchaseReturnService {
       totalAmount += line.lineTotal;
     }
 
-    return PurchaseReturnRepository.create({
-      ...payload,
-      returnNumber,
-      totalAmount
-    });
+    // Goods going back to the supplier must exist in stock.
+    for (const line of payload.items) {
+      const stock =
+        await StockRepository.findByWarehouseAndItem(
+          payload.company,
+          payload.warehouse,
+          line.item
+        );
+
+      const available = stock
+        ? stock.quantity
+        : 0;
+
+      if (available < Number(line.quantity)) {
+        throw new AppError(
+          `Insufficient stock. Only ${available} available.`,
+          409,
+          "INSUFFICIENT_STOCK"
+        );
+      }
+    }
+
+    const purchaseReturn =
+      await PurchaseReturnRepository.create({
+        ...payload,
+        returnNumber,
+        totalAmount
+      });
+
+    for (const line of payload.items) {
+      const stock =
+        await StockRepository.findByWarehouseAndItem(
+          payload.company,
+          payload.warehouse,
+          line.item
+        );
+
+      await StockRepository.update(
+        stock._id,
+        {
+          quantity:
+            stock.quantity -
+            Number(line.quantity)
+        }
+      );
+    }
+
+    return purchaseReturn;
   }
 
   static async getById(id) {
