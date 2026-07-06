@@ -10,6 +10,18 @@ import SalesInvoiceRepository from "../repositories/SalesInvoiceRepository.js";
 import AccountLedgerRepository from "../repositories/AccountLedgerRepository.js";
 import PaymentRepository from "../repositories/PaymentRepository.js";
 
+function toSigned(balance, type) {
+  return type === "DEBIT" ? balance : -balance;
+}
+
+function fromSigned(signedValue) {
+  return {
+    currentBalance: Math.abs(signedValue),
+    balanceType:
+      signedValue >= 0 ? "DEBIT" : "CREDIT"
+  };
+}
+
 export default class PaymentService {
   static async create(payload) {
     const company =
@@ -128,10 +140,24 @@ export default class PaymentService {
       );
     }
 
-    return PaymentRepository.create({
-      ...payload,
-      paymentNumber
-    });
+    const payment =
+      await PaymentRepository.create({
+        ...payload,
+        paymentNumber
+      });
+
+    // Paying out of this ledger is a credit to it.
+    const signed = toSigned(
+      ledger.currentBalance,
+      ledger.balanceType
+    ) - Number(payload.amount);
+
+    await AccountLedgerRepository.update(
+      ledger.id,
+      fromSigned(signed)
+    );
+
+    return payment;
   }
 
   static async getById(id) {
