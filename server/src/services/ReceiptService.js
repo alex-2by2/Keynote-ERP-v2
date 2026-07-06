@@ -8,6 +8,18 @@ import SalesInvoiceRepository from "../repositories/SalesInvoiceRepository.js";
 import AccountLedgerRepository from "../repositories/AccountLedgerRepository.js";
 import ReceiptRepository from "../repositories/ReceiptRepository.js";
 
+function toSigned(balance, type) {
+  return type === "DEBIT" ? balance : -balance;
+}
+
+function fromSigned(signedValue) {
+  return {
+    currentBalance: Math.abs(signedValue),
+    balanceType:
+      signedValue >= 0 ? "DEBIT" : "CREDIT"
+  };
+}
+
 export default class ReceiptService {
   static async create(payload) {
     const company =
@@ -83,10 +95,24 @@ export default class ReceiptService {
       );
     }
 
-    return ReceiptRepository.create({
-      ...payload,
-      receiptNumber
-    });
+    const receipt =
+      await ReceiptRepository.create({
+        ...payload,
+        receiptNumber
+      });
+
+    // Receiving into this ledger is a debit to it.
+    const signed = toSigned(
+      ledger.currentBalance,
+      ledger.balanceType
+    ) + Number(payload.amount);
+
+    await AccountLedgerRepository.update(
+      ledger.id,
+      fromSigned(signed)
+    );
+
+    return receipt;
   }
 
   static async getById(id) {
