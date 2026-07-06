@@ -6,6 +6,7 @@ import CompanyRepository from "../repositories/CompanyRepository.js";
 import CustomerRepository from "../repositories/CustomerRepository.js";
 import WarehouseRepository from "../repositories/WarehouseRepository.js";
 import ItemRepository from "../repositories/ItemRepository.js";
+import StockRepository from "../repositories/StockRepository.js";
 import SalesReturnRepository from "../repositories/SalesReturnRepository.js";
 
 export default class SalesReturnService {
@@ -80,11 +81,44 @@ export default class SalesReturnService {
       totalAmount += line.lineTotal;
     }
 
-    return SalesReturnRepository.create({
-      ...payload,
-      returnNumber,
-      totalAmount
-    });
+    const salesReturn =
+      await SalesReturnRepository.create({
+        ...payload,
+        returnNumber,
+        totalAmount
+      });
+
+    // Returned goods come back into stock.
+    for (const line of payload.items) {
+      const returnedQty =
+        Number(line.quantity);
+
+      const stock =
+        await StockRepository.findByWarehouseAndItem(
+          payload.company,
+          payload.warehouse,
+          line.item
+        );
+
+      if (stock) {
+        await StockRepository.update(
+          stock._id,
+          {
+            quantity:
+              stock.quantity + returnedQty
+          }
+        );
+      } else {
+        await StockRepository.create({
+          company: payload.company,
+          warehouse: payload.warehouse,
+          item: line.item,
+          quantity: returnedQty
+        });
+      }
+    }
+
+    return salesReturn;
   }
 
   static async getById(id) {
