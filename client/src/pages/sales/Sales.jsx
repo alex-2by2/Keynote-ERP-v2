@@ -53,6 +53,7 @@ export default function Sales() {
   const [invoiceDate, setInvoiceDate] = useState(todayDate());
   const [lines, setLines] = useState([]);
   const [barcodeInput, setBarcodeInput] = useState("");
+  const [lastReceipt, setLastReceipt] = useState(null);
 
   const barcodeInputRef = useRef(null);
 
@@ -269,6 +270,26 @@ export default function Sales() {
 
       const loadedInvoices = await reloadInvoices();
 
+      setLastReceipt({
+        invoiceNumber,
+        invoiceDate,
+        customerName:
+          customers.find(c => c._id === customer)?.name || "",
+        lines: lines.map(line => {
+          const item = items.find(i => i._id === line.item);
+
+          return {
+            name: item?.name || "",
+            quantity: line.quantity,
+            unitPrice: line.unitPrice,
+            lineTotal: (
+              Number(line.quantity) * Number(line.unitPrice)
+            ).toFixed(2)
+          };
+        }),
+        grandTotal: created.grandTotal
+      });
+
       setSuccess(
         `Sale completed — ${invoiceNumber}, total ${created.grandTotal}.`
       );
@@ -366,6 +387,55 @@ export default function Sales() {
 
       {error && <p className="error-message">{error}</p>}
       {success && <p className="success-message">{success}</p>}
+
+      {lastReceipt && (
+        <div className="receipt-print">
+          <h2>Keynote ERP</h2>
+
+          <p>Invoice: {lastReceipt.invoiceNumber}</p>
+          <p>Date: {lastReceipt.invoiceDate}</p>
+          <p>Customer: {lastReceipt.customerName}</p>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Qty</th>
+                <th>Price</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {lastReceipt.lines.map((line, index) => (
+                <tr key={index}>
+                  <td>{line.name}</td>
+                  <td>{line.quantity}</td>
+                  <td>{line.unitPrice}</td>
+                  <td>{line.lineTotal}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          <div className="billing-total">
+            Total: {lastReceipt.grandTotal}
+          </div>
+
+          <div className="no-print">
+            <button type="button" onClick={() => window.print()}>
+              Print Receipt
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setLastReceipt(null)}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
 
       {tab === "billing" && (
         <>
