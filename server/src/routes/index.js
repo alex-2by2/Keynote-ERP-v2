@@ -9,6 +9,7 @@ import dashboardRoutes from "./dashboard.routes.js";
 import userRoutes from "./user.routes.js";
 import roleRoutes from "./role.routes.js";
 import permissionRoutes from "./permission.routes.js";
+import userRoleRoutes from "./userRole.routes.js";
 
 import companyRoutes from "./company.routes.js";
 import branchRoutes from "./branch.routes.js";
@@ -54,6 +55,7 @@ router.use("/dashboard", dashboardRoutes);
 router.use("/users", userRoutes);
 router.use("/roles", roleRoutes);
 router.use("/permissions", permissionRoutes);
+router.use("/user-roles", userRoleRoutes);
 
 router.use("/companies", companyRoutes);
 router.use("/branches", branchRoutes);
