@@ -2,6 +2,7 @@
 
 import RoleRepository from "../repositories/RoleRepository.js";
 import PermissionRepository from "../repositories/PermissionRepository.js";
+import RolePermissionRepository from "../repositories/RolePermissionRepository.js";
 import AppError from "../utils/AppError.js";
 
 export default class RoleService {
@@ -18,15 +19,20 @@ export default class RoleService {
       );
     }
 
-    const permissions = await this.#resolvePermissions(
+    const permissionIds = await this.#resolvePermissions(
       payload.permissions || []
     );
 
-    return RoleRepository.create({
-      ...payload,
+    const role = await RoleRepository.create({
       code,
-      permissions
+      name: payload.name,
+      description: payload.description,
+      active: payload.active !== false
     });
+
+    await this.#syncPermissions(role.id, permissionIds);
+
+    return this.getById(role.id);
   }
 
   static async getById(id) {
@@ -40,33 +46,53 @@ export default class RoleService {
       );
     }
 
-    return role;
+    return this.#attachPermissions(role);
   }
 
   static async getByCode(code) {
-    return RoleRepository.findByCode(code);
+    const role = await RoleRepository.findByCode(code);
+
+    if (!role) {
+      return null;
+    }
+
+    return this.#attachPermissions(role);
   }
 
   static async list() {
-    return RoleRepository.list({
+    const roles = await RoleRepository.list({
       active: true
     });
+
+    return Promise.all(
+      roles.map(role => this.#attachPermissions(role))
+    );
   }
 
   static async update(id, payload) {
     await this.getById(id);
 
-    if (payload.code) {
-      payload.code = payload.code.trim().toUpperCase();
+    const updateData = { ...payload };
+    const permissions = updateData.permissions;
+
+    delete updateData.permissions;
+
+    if (updateData.code) {
+      updateData.code = updateData.code
+        .trim()
+        .toUpperCase();
     }
 
-    if (payload.permissions) {
-      payload.permissions = await this.#resolvePermissions(
-        payload.permissions
-      );
+    await RoleRepository.update(id, updateData);
+
+    if (permissions) {
+      const permissionIds =
+        await this.#resolvePermissions(permissions);
+
+      await this.#syncPermissions(id, permissionIds);
     }
 
-    return RoleRepository.update(id, payload);
+    return this.getById(id);
   }
 
   static async delete(id) {
@@ -132,5 +158,40 @@ export default class RoleService {
     }
 
     return resolved;
+  }
+
+  // Replaces the full set of permissions for a role.
+  // Simpler and safer than diffing old vs new.
+  static async #syncPermissions(roleId, permissionIds) {
+    const existing =
+      await RolePermissionRepository.findByRole(roleId);
+
+    for (const rolePermission of existing) {
+      await RolePermissionRepository.delete(
+        rolePermission._id
+      );
+    }
+
+    for (const permissionId of permissionIds) {
+      await RolePermissionRepository.create({
+        role: roleId,
+        permission: permissionId
+      });
+    }
+  }
+
+  static async #attachPermissions(role) {
+    const rolePermissions =
+      await RolePermissionRepository.findByRole(role.id);
+
+    const permissions = rolePermissions
+      .filter(rolePermission => rolePermission.permission)
+      .map(rolePermission => rolePermission.permission);
+
+    const roleObject = role.toObject
+      ? role.toObject()
+      : role;
+
+    return { ...roleObject, permissions };
   }
 }
