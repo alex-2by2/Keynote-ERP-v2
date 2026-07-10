@@ -404,3 +404,32 @@ button[type="submit"]:hover { background: #7d571f; border-color: #7d571f; color:
   .login-card { padding: var(--space-5) var(--space-4); }
   .setup-page { margin: var(--space-4); padding: var(--space-4); }
 }
+.permission-groups {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  max-height: 400px;
+  overflow-y: auto;
+  margin-top: var(--space-2);
+}
+
+.permission-group {
+  margin-bottom: var(--space-4);
+}
+
+.permission-group:last-child {
+  margin-bottom: 0;
+}
+
+.permission-group-title {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--keynote-deep);
+  margin-bottom: var(--space-2);
+}
+
+.permission-group .checkbox-field {
+  margin-bottom: var(--space-1);
+}
