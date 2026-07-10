@@ -16,6 +16,16 @@ export default class UserRoleRepository {
     return UserRole.create(payload);
   }
 
+  static async findOne(userId, companyId) {
+    return UserRole.findOne({
+      user: userId,
+      company: companyId,
+      active: true
+    })
+      .populate("role")
+      .populate("company");
+  }
+
   static async findByUser(userId) {
     return UserRole.find({
       user: userId,
@@ -32,6 +42,28 @@ export default class UserRoleRepository {
     })
       .populate("user")
       .populate("company");
+  }
+
+  static async list(companyId) {
+    return UserRole.find({
+      company: companyId,
+      active: true
+    })
+      .populate("user", "firstName lastName email")
+      .populate("role");
+  }
+
+  static async update(id, payload) {
+    return UserRole.findByIdAndUpdate(
+      id,
+      payload,
+      {
+        new: true,
+        runValidators: true
+      }
+    )
+      .populate("user", "firstName lastName email")
+      .populate("role");
   }
 
   static async delete(id, session = null) {
